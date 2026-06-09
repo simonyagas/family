@@ -354,6 +354,7 @@ body::after {
 .dialogue-box__title {
   margin: 0;
   text-align: center;
+  white-space: pre-line;
   text-shadow: 3px 3px 0 var(--shadow);
 }
 
@@ -427,6 +428,17 @@ body::after {
   animation: shake 180ms steps(2, end) infinite;
 }
 
+.scene.is-save-detected .dialogue-box {
+  border-color: var(--color-amber);
+  box-shadow:
+    8px 8px 0 var(--shadow),
+    0 0 34px rgba(255, 209, 102, 0.16);
+}
+
+.scene.is-save-detected .dialogue-box__title {
+  color: var(--color-amber);
+}
+
 .scene.is-emotional .character-card:last-child {
   box-shadow:
     0 0 0 3px var(--color-shadow),
@@ -441,6 +453,37 @@ body::after {
 .scene.is-emotional .dialogue-box__text {
   color: var(--color-lime);
   animation: breathText 2.5s steps(4, end) 1;
+}
+
+.scene.is-blackout {
+  background: #000;
+  border-color: #070707;
+}
+
+.scene.is-blackout::before,
+.scene.is-blackout::after,
+.scene.is-blackout .scene__status,
+.scene.is-blackout .scene__visual,
+.scene.is-blackout .dialogue-box__label,
+.scene.is-blackout .dialogue-box__text {
+  opacity: 0;
+}
+
+.scene.is-blackout .dialogue-box {
+  align-self: center;
+  background: transparent;
+  border-color: transparent;
+  box-shadow: none;
+}
+
+.scene.is-blackout .dialogue-box::before,
+.scene.is-blackout .dialogue-box::after {
+  display: none;
+}
+
+.scene.is-blackout .dialogue-box__title {
+  color: var(--color-ink);
+  animation: waitPulse 2s steps(4, end) 1;
 }
 
 .scene.is-glitch-strong {
@@ -468,6 +511,20 @@ body::after {
 .scene.is-glitch-strong .dialogue-box__title,
 .scene.is-glitch-strong .dialogue-box__text {
   animation: glitch 180ms steps(2, end) infinite;
+}
+
+.scene.is-duplicate-glitch .dialogue-box__title {
+  color: var(--color-ink);
+  font-size: clamp(0.82rem, 3.4vw, 1.7rem);
+  line-height: 1.85;
+  text-align: left;
+  animation:
+    duplicateFlash 1s steps(2, end) 1,
+    glitch 160ms steps(2, end) infinite;
+}
+
+.scene.is-duplicate-glitch .dialogue-box__title::first-line {
+  color: var(--color-cyan);
 }
 
 .scene.is-pause .scene__visual {
@@ -519,6 +576,26 @@ body::after {
   }
   50% {
     opacity: 0.42;
+  }
+}
+
+@keyframes waitPulse {
+  0%,
+  100% {
+    opacity: 0.22;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@keyframes duplicateFlash {
+  0%,
+  100% {
+    filter: none;
+  }
+  50% {
+    filter: contrast(1.8) saturate(1.8);
   }
 }
 
