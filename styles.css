@@ -526,6 +526,24 @@ body::after {
   border-color: #070707;
 }
 
+.scene.is-blackout.is-wait-glitch {
+  background:
+    linear-gradient(90deg, rgba(255, 63, 95, 0.22), transparent 18%, rgba(66, 232, 255, 0.18) 32%, transparent 46%),
+    repeating-linear-gradient(
+      0deg,
+      rgba(255, 255, 255, 0.16) 0,
+      rgba(255, 255, 255, 0.16) 2px,
+      rgba(0, 0, 0, 0.05) 2px,
+      rgba(0, 0, 0, 0.05) 7px
+    ),
+    radial-gradient(circle at 42% 50%, rgba(157, 255, 91, 0.12), transparent 32%),
+    #020107;
+  border-color: rgba(255, 63, 95, 0.5);
+  animation:
+    tvFailureShake 85ms steps(2, end) infinite,
+    tvFailure 700ms steps(4, end) infinite;
+}
+
 .scene.is-blackout::before,
 .scene.is-blackout::after,
 .scene.is-blackout .scene__status,
@@ -535,11 +553,58 @@ body::after {
   opacity: 0;
 }
 
+.scene.is-blackout.is-wait-glitch::before {
+  inset: 0;
+  opacity: 0.55;
+  border: 0;
+  background:
+    linear-gradient(90deg, rgba(255, 63, 95, 0.18), transparent 24%, rgba(66, 232, 255, 0.18) 52%, transparent 78%),
+    repeating-linear-gradient(90deg, transparent 0 10px, rgba(255, 255, 255, 0.08) 10px 12px);
+  mix-blend-mode: screen;
+  animation: rgbDrift 360ms steps(3, end) infinite;
+}
+
+.scene.is-blackout.is-wait-glitch::after {
+  inset: -18%;
+  opacity: 0.38;
+  border: 0;
+  background:
+    repeating-linear-gradient(
+      0deg,
+      transparent 0,
+      transparent 11px,
+      rgba(255, 248, 217, 0.22) 12px,
+      transparent 14px
+    ),
+    linear-gradient(180deg, transparent, rgba(66, 232, 255, 0.18), transparent);
+  box-shadow: none;
+  animation: signalRoll 820ms linear infinite;
+}
+
+.scene.is-blackout.is-wait-glitch .scene__status,
+.scene.is-blackout.is-wait-glitch .dialogue-box__label,
+.scene.is-blackout.is-wait-glitch .dialogue-box__text {
+  opacity: 1;
+}
+
 .scene.is-blackout .dialogue-box {
   align-self: center;
   background: transparent;
   border-color: transparent;
   box-shadow: none;
+}
+
+.scene.is-blackout.is-wait-glitch .dialogue-box {
+  align-self: center;
+  background:
+    linear-gradient(90deg, rgba(255, 63, 95, 0.12), transparent 42%, rgba(66, 232, 255, 0.12)),
+    rgba(0, 0, 0, 0.72);
+  border-color: rgba(255, 248, 217, 0.36);
+  box-shadow:
+    8px 8px 0 var(--color-shadow),
+    -8px 0 0 rgba(255, 63, 95, 0.22),
+    8px 0 0 rgba(66, 232, 255, 0.22);
+  animation: hardGlitch 260ms steps(2, end) infinite;
 }
 
 .scene.is-blackout .dialogue-box::before,
@@ -550,6 +615,19 @@ body::after {
 .scene.is-blackout .dialogue-box__title {
   color: var(--color-ink);
   animation: waitPulse 2s steps(4, end) 1;
+}
+
+.scene.is-blackout.is-wait-glitch .dialogue-box__title {
+  color: var(--color-danger);
+  text-shadow:
+    4px 0 0 var(--color-cyan),
+    -4px 0 0 var(--color-pink),
+    3px 3px 0 var(--color-shadow);
+  animation: waitGlitchText 180ms steps(2, end) infinite;
+}
+
+.scene.is-blackout.is-wait-glitch .dialogue-box__text {
+  color: var(--color-amber);
 }
 
 .scene.is-glitch-strong {
@@ -567,6 +645,16 @@ body::after {
 .scene.is-error .dialogue-box__text {
   color: var(--danger);
   animation: glitch 620ms steps(2, end) infinite;
+}
+
+.scene.is-blackout.is-wait-glitch .dialogue-box__title {
+  color: var(--color-danger);
+  animation: waitGlitchText 180ms steps(2, end) infinite;
+}
+
+.scene.is-blackout.is-wait-glitch .dialogue-box__text {
+  color: var(--color-amber);
+  animation: glitch 360ms steps(2, end) infinite;
 }
 
 .scene.is-glitch-strong .dialogue-box,
@@ -670,6 +758,69 @@ body::after {
   }
   50% {
     opacity: 1;
+  }
+}
+
+@keyframes tvFailure {
+  0%,
+  100% {
+    filter: contrast(1.1) saturate(1.1) hue-rotate(0deg);
+  }
+  35% {
+    filter: contrast(1.8) saturate(2.2) hue-rotate(38deg);
+  }
+  70% {
+    filter: contrast(1.45) saturate(1.8) hue-rotate(-26deg);
+  }
+}
+
+@keyframes tvFailureShake {
+  0%,
+  100% {
+    transform: translate(0, 0);
+  }
+  25% {
+    transform: translate(-4px, 2px);
+  }
+  50% {
+    transform: translate(5px, -3px);
+  }
+  75% {
+    transform: translate(-2px, -2px);
+  }
+}
+
+@keyframes signalRoll {
+  from {
+    transform: translateY(-16%);
+  }
+  to {
+    transform: translateY(16%);
+  }
+}
+
+@keyframes rgbDrift {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  33% {
+    transform: translateX(-12px);
+  }
+  66% {
+    transform: translateX(12px);
+  }
+}
+
+@keyframes waitGlitchText {
+  0%,
+  100% {
+    transform: translate(0, 0);
+    opacity: 1;
+  }
+  50% {
+    transform: translate(7px, -2px);
+    opacity: 0.62;
   }
 }
 

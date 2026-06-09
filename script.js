@@ -29,7 +29,7 @@ const scenes = [
     label: "FAMILIA YAGAS",
     title: "PARTIDA 2026",
     text: "PRESIONÁ INICIAR",
-    button: "PRESIONÁ INICIAR",
+    button: "START",
     characters: [],
   },
   {
@@ -71,13 +71,17 @@ const scenes = [
     tone: "unlock",
   },
   {
-    status: "",
-    label: "",
+    status: "ERROR DE SEÑAL",
+    label: "SISTEMA",
     title: "Esperá...",
-    text: "",
+    text: "Interferencia detectada",
     button: "CONTINUAR",
     buttonDelay: 2000,
-    modifier: "is-blackout",
+    modifier: "is-blackout is-wait-glitch is-error",
+    timedUpdates: [
+      { delay: 520, status: "ERROR DE SEÑAL", label: "ERROR", title: "CARGANDO JUGADOR 5...", text: "No cierres la partida", tone: "error" },
+      { delay: 1250, status: "SEÑAL INESTABLE", label: "ERROR", title: "SEÑAL INESTABLE", text: "Nueva frecuencia encontrada", tone: "error" },
+    ],
     characters: [],
   },
   {
@@ -203,7 +207,7 @@ function renderScene() {
   clearSceneTimers();
   sceneElement.className = "scene is-entering";
   if (scene.modifier) {
-    sceneElement.classList.add(scene.modifier);
+    sceneElement.classList.add(...scene.modifier.split(" "));
   }
 
   sceneStatus.textContent = scene.status;
