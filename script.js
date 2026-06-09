@@ -1,6 +1,7 @@
 const assetPath = "assets/img/";
 const itemPath = "assets/img/";
 const soundPath = "assets/audio/";
+
 const soundFiles = {
   start: "start.mp3",
   advance: "select.mp3",
@@ -9,40 +10,48 @@ const soundFiles = {
   error: "glitch.mp3",
 };
 
-// Definiciones compartidas por las escenas, con reemplazos visuales si faltan imágenes.
+const sharePayload = {
+  title: "Familia Yagas - Partida 2026",
+  text: "Logro desbloqueado: familia de 5. Son mellizos.",
+};
+
 const party = {
-  simon: { name: "Simón", image: "simon.png", color: "#42e8ff" },
+  simon: { name: "Sim\u00f3n", image: "simon.png", color: "#42e8ff" },
   agus: { name: "Agus", image: "agus.png", color: "#ffd166" },
   alma: { name: "Alma", image: "alma.png", color: "#ff8ad8" },
-  baby1: { name: "Jugador 4", image: "baby1.png", color: "#9dff5b" },
-  baby2: { name: "Jugador 5", image: "baby2.png", color: "#b7a4ff" },
+  baby1: { name: "Jugador 4", image: "baby1.png", color: "#9dff5b", placeholder: "spark" },
+  baby2: { name: "Jugador 5", image: "baby2.png", color: "#b7a4ff", placeholder: "pulse" },
 };
 
 const items = {
-  ultrasound: { name: "Ecografía", caption: "Primera eco", image: "ultrasound.png", color: "#ffd166" },
+  ultrasound: {
+    name: "Ecograf\u00eda",
+    caption: "Primera eco",
+    image: "ultrasound.png",
+    color: "#ffd166",
+  },
 };
 
-// Cada clic avanza por esta lista de escenas en orden.
 const scenes = [
   {
-    status: "PARTIDA 2026",
+    status: "NUEVA PARTIDA",
     label: "FAMILIA YAGAS",
     title: "PARTIDA 2026",
-    text: "PRESIONÁ INICIAR",
+    text: "NUEVA PARTIDA DISPONIBLE",
     button: "START",
     characters: [],
   },
   {
     status: "ESTADO DEL GRUPO",
     label: "GRUPO ACTUAL",
-    title: "Simón, Agus, Alma",
-    text: "Tamaño del grupo: 3",
+    title: "Sim\u00f3n, Agus, Alma",
+    text: "Tama\u00f1o del grupo: 3",
     button: "CONTINUAR",
     characters: ["simon", "agus", "alma"],
   },
   {
-    status: "REGISTRO DE MISIÓN",
-    label: "MISIÓN COMPLETADA",
+    status: "REGISTRO DE MISI\u00d3N",
+    label: "MISI\u00d3N COMPLETADA",
     title: "Criar a Alma",
     text: "Recompensa disponible",
     button: "CONTINUAR",
@@ -51,8 +60,8 @@ const scenes = [
   {
     status: "OBJETO ENCONTRADO",
     label: "OBJETO LEGENDARIO",
-    title: "Ecografía adquirida",
-    text: "Se detectó una nueva señal...",
+    title: "Objeto legendario adquirido",
+    text: "Se detect\u00f3 una nueva se\u00f1al...",
     button: "CONTINUAR",
     modifier: "is-save-detected",
     items: ["ultrasound"],
@@ -62,8 +71,8 @@ const scenes = [
   {
     status: "NUEVO PERSONAJE",
     label: "DESBLOQUEADO",
-    title: "Jugador 4 se unió",
-    text: "Tamaño del grupo: 4",
+    title: "Jugador 4 se uni\u00f3",
+    text: "Tama\u00f1o del grupo: 4",
     button: "CONTINUAR",
     buttonDelay: 2500,
     modifier: "is-emotional",
@@ -71,30 +80,31 @@ const scenes = [
     tone: "unlock",
   },
   {
-    status: "ERROR DE SEÑAL",
+    status: "ERROR DE SE\u00d1AL",
     label: "SISTEMA",
-    title: "Esperá...",
+    title: "Esper\u00e1...",
     text: "Interferencia detectada",
     button: "CONTINUAR",
     buttonDelay: 2000,
     modifier: "is-blackout is-wait-glitch is-error",
     timedUpdates: [
-      { delay: 520, status: "ERROR DE SEÑAL", label: "ERROR", title: "CARGANDO JUGADOR 5...", text: "No cierres la partida", tone: "error" },
-      { delay: 1250, status: "SEÑAL INESTABLE", label: "ERROR", title: "SEÑAL INESTABLE", text: "Nueva frecuencia encontrada", tone: "error" },
+      { delay: 520, status: "ERROR DE SE\u00d1AL", label: "ERROR", title: "CARGANDO JUGADOR 5...", text: "No cierres la partida", tone: "error" },
+      { delay: 1250, status: "SE\u00d1AL INESTABLE", label: "ERROR", title: "SE\u00d1AL INESTABLE", text: "Nueva frecuencia encontrada", tone: "error" },
     ],
     characters: [],
   },
   {
     status: "ALERTA DEL SISTEMA",
     label: "ERROR",
-    title: "Jugador 4 se unió\nJugador 4 se unió\nJugador 5 se unió",
-    text: "Tamaño del grupo: 4",
+    title: "Jugador 4 se uni\u00f3\nJugador 4 se uni\u00f3\nJugador 5 se uni\u00f3",
+    text: "Tama\u00f1o del grupo: 4",
     button: "CONTINUAR",
     buttonDelay: 2400,
     modifier: "is-error is-glitch-strong is-duplicate-glitch",
     timedUpdates: [
-      { delay: 1000, status: "ALERTA DEL SISTEMA", label: "ERROR", title: "RECALCULANDO...", text: "Tamaño del grupo: 4", tone: "error" },
-      { delay: 1650, status: "AJUSTE DEL SISTEMA", label: "ERROR", title: "SEGUNDA SEÑAL DETECTADA", text: "Tamaño del grupo: 5", tone: "unlock" },
+      { delay: 760, status: "ALERTA DEL SISTEMA", label: "ERROR", title: "RECALCULANDO...", text: "Tama\u00f1o del grupo: 4", tone: "error" },
+      { delay: 1400, status: "AJUSTE DEL SISTEMA", label: "ERROR", title: "SEGUNDA SE\u00d1AL DETECTADA", text: "Tama\u00f1o del grupo: 5", tone: "unlock" },
+      { delay: 2050, status: "SISTEMA CORREGIDO", label: "NO ERA ERROR", title: "NO ERA ERROR", text: "La partida ven\u00eda con bonus", tone: "unlock" },
     ],
     items: ["ultrasound"],
     characters: [],
@@ -103,24 +113,28 @@ const scenes = [
   {
     status: "NUEVO PERSONAJE",
     label: "DESBLOQUEADO",
-    title: "Jugador 5 se unió",
+    title: "Jugador 5 se uni\u00f3",
     text: "Recompensa doble confirmada.",
     button: "CONTINUAR",
     characters: ["simon", "agus", "alma", "baby1", "baby2"],
     tone: "unlock",
   },
   {
-    status: "EXPANSIÓN LISTA",
-    label: "INSTALACIÓN COMPLETA",
+    status: "LOGRO DESBLOQUEADO",
+    label: "FAMILIA YAGAS",
     title: "SON MELLIZOS",
-    text: "Jugador 4 y Jugador 5 se suman pronto\nTamaño del grupo familiar: 5",
+    text: "Familia de 5 confirmada\nJugador 4 y Jugador 5 se suman pronto",
     button: "JUGAR DE NUEVO",
+    modifier: "is-achievement",
     characters: ["simon", "agus", "alma", "baby1", "baby2"],
+    isFinal: true,
+    tone: "unlock",
   },
 ];
 
 let sceneIndex = 0;
 let audioContext;
+let replayClicks = 0;
 const audioCache = new Map();
 let sceneTimers = [];
 
@@ -131,10 +145,24 @@ const sceneLabel = document.querySelector("#sceneLabel");
 const sceneTitle = document.querySelector("#sceneTitle");
 const sceneText = document.querySelector("#sceneText");
 const continueButton = document.querySelector("#continueButton");
+const shareButton = document.querySelector("#shareButton");
 
 function clearSceneTimers() {
   sceneTimers.forEach((timer) => window.clearTimeout(timer));
   sceneTimers = [];
+}
+
+function createBabySilhouette(character) {
+  const silhouette = document.createElement("span");
+  const core = document.createElement("span");
+  const sparkle = document.createElement("span");
+
+  silhouette.className = `baby-silhouette baby-silhouette--${character.placeholder}`;
+  core.className = "baby-silhouette__core";
+  sparkle.className = "baby-silhouette__sparkle";
+  silhouette.setAttribute("aria-hidden", "true");
+  silhouette.append(core, sparkle);
+  return silhouette;
 }
 
 function createAvatar(characterKey) {
@@ -142,14 +170,22 @@ function createAvatar(characterKey) {
   const card = document.createElement("figure");
   const avatar = document.createElement("div");
   const image = document.createElement("img");
-  const fallback = document.createElement("span");
+  const fallback = character.placeholder
+    ? createBabySilhouette(character)
+    : document.createElement("span");
   const caption = document.createElement("figcaption");
 
   card.className = "character-card";
+  if (character.placeholder) {
+    card.classList.add("character-card--new");
+  }
+
   avatar.className = "avatar";
   avatar.style.setProperty("--avatar-color", character.color);
-  fallback.className = "avatar__fallback";
-  fallback.textContent = character.name.slice(0, 1);
+  fallback.classList.add("avatar__fallback");
+  if (!character.placeholder) {
+    fallback.textContent = character.name.slice(0, 1);
+  }
 
   image.src = `${assetPath}${character.image}`;
   image.alt = character.name;
@@ -199,6 +235,13 @@ function createItemCard(itemKey) {
   return card;
 }
 
+function setShareButtonState(scene) {
+  shareButton.hidden = !scene.isFinal;
+  shareButton.classList.toggle("is-hidden", !scene.isFinal);
+  shareButton.disabled = false;
+  shareButton.textContent = "COMPARTIR";
+}
+
 function renderScene() {
   const scene = scenes[sceneIndex];
   const sceneItems = scene.items ?? [];
@@ -217,7 +260,12 @@ function renderScene() {
   continueButton.textContent = scene.button;
   continueButton.disabled = Boolean(scene.buttonDelay);
   continueButton.classList.toggle("is-hidden", Boolean(scene.buttonDelay));
+  setShareButtonState(scene);
 
+  sceneVisual.setAttribute(
+    "aria-label",
+    scene.isFinal ? "Familia completa con cinco jugadores" : "Personajes y objetos de la partida"
+  );
   sceneVisual.replaceChildren(
     ...sceneItems.map(createItemCard),
     ...sceneCharacters.map(createAvatar)
@@ -260,8 +308,8 @@ function playSoundFile(type) {
   const audio = audioCache.get(file);
   audio.currentTime = 0;
   return audio.play().catch((error) => {
-    if (type === "item" && file !== soundFiles.unlock) {
-      return playSoundFile("unlock");
+    if ((type === "start" || type === "item") && file !== soundFiles.advance) {
+      return playSoundFile(type === "item" ? "unlock" : "advance");
     }
 
     throw error;
@@ -270,12 +318,12 @@ function playSoundFile(type) {
 
 function playGeneratedTone(type = "advance") {
   try {
-    // El audio arranca después de una acción del usuario para que el navegador lo permita.
     audioContext ||= new AudioContext();
     const oscillator = audioContext.createOscillator();
     const gain = audioContext.createGain();
     const now = audioContext.currentTime;
     const frequencies = {
+      start: [392, 784],
       advance: [520, 780],
       unlock: [660, 990],
       item: [740, 1180],
@@ -296,7 +344,7 @@ function playGeneratedTone(type = "advance") {
     oscillator.start(now);
     oscillator.stop(now + 0.18);
   } catch {
-    // El audio es decorativo; si falla, no debe interrumpir la revelación.
+    // Decorative audio must never interrupt the reveal.
   }
 }
 
@@ -310,12 +358,49 @@ function playTone(type = "advance") {
   }
 }
 
+async function shareReveal() {
+  const url = window.location.href;
+  const textToCopy = `${sharePayload.text} ${url}`;
+
+  try {
+    if (navigator.share) {
+      await navigator.share({ ...sharePayload, url });
+      return;
+    }
+
+    if (navigator.clipboard?.writeText) {
+      await navigator.clipboard.writeText(textToCopy);
+      shareButton.textContent = "COPIADO";
+    } else {
+      shareButton.textContent = "LISTO";
+    }
+  } catch {
+    shareButton.textContent = "LISTO";
+  }
+
+  shareButton.disabled = true;
+  window.setTimeout(() => {
+    shareButton.disabled = false;
+    shareButton.textContent = "COMPARTIR";
+  }, 1800);
+}
+
 continueButton.addEventListener("click", () => {
   const wasStartScreen = sceneIndex === 0;
   const isLastScene = sceneIndex === scenes.length - 1;
+
+  if (isLastScene) {
+    replayClicks += 1;
+    if (replayClicks > 1) {
+      sceneStatus.textContent = "NUEVA RUN DISPONIBLE";
+    }
+  }
+
   sceneIndex = isLastScene ? 0 : sceneIndex + 1;
   renderScene();
   playTone(wasStartScreen ? "start" : scenes[sceneIndex].tone);
 });
+
+shareButton.addEventListener("click", shareReveal);
 
 renderScene();

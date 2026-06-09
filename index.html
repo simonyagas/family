@@ -4,6 +4,15 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="theme-color" content="#090b16">
+    <meta name="description" content="Familia Yagas desbloquea una nueva partida 2026: logro familiar de 5 confirmado.">
+    <meta property="og:title" content="Familia Yagas - Partida 2026">
+    <meta property="og:description" content="Logro desbloqueado: familia de 5. Son mellizos.">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="assets/img/ultrasound.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Familia Yagas - Partida 2026">
+    <meta name="twitter:description" content="Logro desbloqueado: familia de 5. Son mellizos.">
+    <meta name="twitter:image" content="assets/img/ultrasound.png">
     <title>Familia Yagas - Partida 2026</title>
     <link rel="stylesheet" href="styles.css">
   </head>
@@ -17,22 +26,27 @@
       <span class="map-tile map-tile--three"></span>
     </div>
 
-    <main class="game-shell" aria-live="polite">
+    <main class="game-shell">
       <div class="screen-frame">
         <section class="scene" id="scene">
-          <div class="scene__status" id="sceneStatus">PARTIDA 2026</div>
+          <div class="scene__status" id="sceneStatus">NUEVA PARTIDA</div>
 
-          <div class="scene__visual" id="sceneVisual" aria-label="Grupo actual"></div>
+          <div class="scene__visual" id="sceneVisual" aria-label="Personajes y objetos de la partida"></div>
 
-          <div class="dialogue-box">
+          <div class="dialogue-box" aria-live="polite" aria-atomic="true">
             <p class="dialogue-box__label" id="sceneLabel">FAMILIA YAGAS</p>
             <h1 class="dialogue-box__title" id="sceneTitle">PARTIDA 2026</h1>
-            <p class="dialogue-box__text" id="sceneText">PRESIONÁ INICIAR</p>
+            <p class="dialogue-box__text" id="sceneText">NUEVA PARTIDA DISPONIBLE</p>
           </div>
 
-          <button class="start-button" id="continueButton" type="button">
-            START
-          </button>
+          <div class="scene__actions">
+            <button class="start-button" id="continueButton" type="button">
+              START
+            </button>
+            <button class="share-button is-hidden" id="shareButton" type="button" aria-label="Compartir anuncio de mellizos">
+              COMPARTIR
+            </button>
+          </div>
         </section>
       </div>
     </main>

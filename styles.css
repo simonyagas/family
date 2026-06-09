@@ -168,7 +168,7 @@ body::after {
 
 .screen-frame {
   width: min(100%, 1040px);
-  min-height: min(760px, calc(100svh - 24px));
+  min-height: min(620px, calc(100svh - 96px));
   padding: clamp(10px, 2vw, 18px);
   background:
     linear-gradient(90deg, rgba(255, 248, 217, 0.08) 0 4px, transparent 4px calc(100% - 4px), rgba(255, 248, 217, 0.08) calc(100% - 4px)),
@@ -183,10 +183,10 @@ body::after {
 .scene {
   position: relative;
   display: grid;
-  min-height: calc(100svh - clamp(56px, 9vw, 104px));
+  min-height: calc(100svh - clamp(116px, 12vw, 150px));
   padding: clamp(18px, 4vw, 46px);
   overflow: hidden;
-  grid-template-rows: auto 1fr auto auto;
+  grid-template-rows: auto minmax(150px, 1fr) auto auto;
   gap: clamp(14px, 3vw, 28px);
   background:
     linear-gradient(90deg, rgba(255, 255, 255, 0.025) 50%, transparent 50%) 0 0 / 8px 8px,
@@ -319,6 +319,13 @@ body::after {
   animation-delay: 0ms, 520ms;
 }
 
+.character-card--new {
+  border-color: var(--avatar-color, var(--color-lime));
+  background:
+    linear-gradient(180deg, rgba(255, 248, 217, 0.11), rgba(5, 7, 17, 0.78)),
+    radial-gradient(circle at 50% 18%, rgba(157, 255, 91, 0.18), transparent 46%);
+}
+
 .avatar {
   position: relative;
   display: grid;
@@ -349,6 +356,69 @@ body::after {
 .avatar__fallback {
   position: absolute;
   z-index: 1;
+}
+
+.baby-silhouette {
+  position: relative;
+  display: grid;
+  width: 58%;
+  aspect-ratio: 0.78;
+  place-items: center;
+  filter: drop-shadow(4px 4px 0 rgba(0, 0, 0, 0.28));
+}
+
+.baby-silhouette__core {
+  position: relative;
+  width: 58%;
+  height: 44%;
+  margin-top: 22%;
+  background: #07101d;
+  box-shadow:
+    0 -72% 0 18% #07101d,
+    -35% 12% 0 -5% #07101d,
+    35% 12% 0 -5% #07101d,
+    -18% 88% 0 -10% #07101d,
+    18% 88% 0 -10% #07101d;
+}
+
+.baby-silhouette__core::before,
+.baby-silhouette__core::after {
+  position: absolute;
+  top: -62%;
+  width: 12%;
+  height: 12%;
+  background: var(--avatar-color, var(--color-lime));
+  content: "";
+}
+
+.baby-silhouette__core::before {
+  left: 26%;
+}
+
+.baby-silhouette__core::after {
+  right: 26%;
+}
+
+.baby-silhouette__sparkle {
+  position: absolute;
+  top: 4%;
+  right: 2%;
+  width: 8px;
+  height: 8px;
+  background: var(--color-ink);
+  box-shadow:
+    -54px 12px 0 var(--avatar-color, var(--color-lime)),
+    -28px 72px 0 var(--color-ink);
+  animation: babySignal 1.8s steps(2, end) infinite;
+}
+
+.baby-silhouette--pulse .baby-silhouette__sparkle {
+  left: 4%;
+  right: auto;
+  box-shadow:
+    50px 18px 0 var(--avatar-color, var(--color-lime)),
+    28px 76px 0 var(--color-ink);
+  animation-delay: 450ms;
 }
 
 .avatar--loaded .avatar__fallback {
@@ -443,9 +513,17 @@ body::after {
   line-height: 1.9;
 }
 
-.start-button {
+.scene__actions {
   z-index: 1;
-  justify-self: center;
+  display: flex;
+  justify-content: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.start-button,
+.share-button {
+  z-index: 1;
   min-width: min(100%, 260px);
   min-height: 54px;
   padding: 16px 22px;
@@ -459,15 +537,32 @@ body::after {
     8px 8px 0 var(--shadow);
   cursor: pointer;
   font: 700 clamp(0.62rem, 2vw, 0.85rem) / 1.4 var(--pixel-font);
+}
+
+.start-button {
   animation: blink 1.3s steps(2, end) infinite;
 }
 
-.start-button:focus-visible {
+.share-button {
+  min-width: min(100%, 210px);
+  color: var(--color-ink);
+  background: var(--color-panel-dark);
+  border-color: var(--color-cyan);
+  box-shadow:
+    inset -6px -6px 0 rgba(0, 0, 0, 0.22),
+    inset 6px 6px 0 rgba(255, 255, 255, 0.08),
+    0 0 0 4px var(--color-shadow),
+    8px 8px 0 var(--shadow);
+}
+
+.start-button:focus-visible,
+.share-button:focus-visible {
   outline: 4px solid var(--pink);
   outline-offset: 8px;
 }
 
-.start-button:active {
+.start-button:active,
+.share-button:active {
   transform: translate(4px, 4px);
   box-shadow:
     inset -4px -4px 0 rgba(0, 0, 0, 0.22),
@@ -475,7 +570,10 @@ body::after {
     4px 4px 0 var(--shadow);
 }
 
-.start-button.is-hidden {
+.start-button.is-hidden,
+.share-button.is-hidden,
+.share-button[hidden] {
+  display: none;
   opacity: 0;
   pointer-events: none;
   transform: translateY(10px);
@@ -686,6 +784,62 @@ body::after {
   opacity: 0.5;
 }
 
+.scene.is-achievement {
+  border-color: var(--color-amber);
+  background:
+    linear-gradient(90deg, rgba(255, 209, 102, 0.12) 0 3px, transparent 3px 18px) 0 0 / 36px 36px,
+    linear-gradient(180deg, rgba(157, 255, 91, 0.12), transparent 36%),
+    radial-gradient(circle at 50% 42%, rgba(255, 209, 102, 0.2), transparent 34%),
+    var(--color-panel);
+  box-shadow:
+    inset 0 0 0 4px rgba(255, 209, 102, 0.18),
+    inset 0 0 60px rgba(157, 255, 91, 0.13);
+}
+
+.scene.is-achievement::before {
+  border-color: rgba(255, 209, 102, 0.38);
+  animation: achievementFlash 1.2s steps(3, end) 1;
+}
+
+.scene.is-achievement::after {
+  border-color: rgba(157, 255, 91, 0.32);
+  box-shadow:
+    inset 0 0 0 2px rgba(255, 248, 217, 0.12),
+    inset 0 0 34px rgba(255, 209, 102, 0.2);
+}
+
+.scene.is-achievement .scene__status {
+  color: var(--color-lime);
+}
+
+.scene.is-achievement .dialogue-box {
+  border-color: var(--color-amber);
+  box-shadow:
+    8px 8px 0 var(--shadow),
+    0 0 0 4px rgba(157, 255, 91, 0.12),
+    0 0 42px rgba(255, 209, 102, 0.22);
+}
+
+.scene.is-achievement .dialogue-box__label {
+  color: var(--color-amber);
+}
+
+.scene.is-achievement .dialogue-box__title {
+  color: var(--color-lime);
+  animation: achievementTitle 1s steps(4, end) 1;
+}
+
+.scene.is-achievement .dialogue-box__text {
+  color: var(--color-ink);
+}
+
+.scene.is-achievement .character-card--new {
+  box-shadow:
+    0 0 0 3px var(--color-shadow),
+    var(--pixel-size) var(--pixel-size) 0 rgba(255, 209, 102, 0.72),
+    0 0 30px rgba(157, 255, 91, 0.26);
+}
+
 @keyframes blink {
   50% {
     opacity: 0.62;
@@ -748,6 +902,38 @@ body::after {
   }
   50% {
     opacity: 0.42;
+  }
+}
+
+@keyframes babySignal {
+  50% {
+    opacity: 0.35;
+    transform: translateY(4px);
+  }
+}
+
+@keyframes achievementFlash {
+  0%,
+  100% {
+    opacity: 0.16;
+  }
+  35% {
+    opacity: 0.7;
+  }
+}
+
+@keyframes achievementTitle {
+  0% {
+    transform: scale(0.92);
+    filter: brightness(0.5);
+  }
+  55% {
+    transform: scale(1.06);
+    filter: brightness(1.7);
+  }
+  100% {
+    transform: scale(1);
+    filter: brightness(1);
   }
 }
 
@@ -923,11 +1109,13 @@ body::after {
   }
 
   .game-shell {
-    padding: 10px;
+    padding: 8px;
   }
 
   .screen-frame {
-    min-height: calc(100svh - 20px);
+    width: min(100%, 430px);
+    min-height: calc(100svh - 16px);
+    padding: 9px;
     border-width: 3px;
     box-shadow:
       0 0 0 4px var(--shadow),
@@ -936,41 +1124,181 @@ body::after {
   }
 
   .scene {
-    min-height: calc(100svh - 42px);
-    padding: 18px 14px;
+    min-height: calc(100svh - 40px);
+    padding: 14px 12px;
+    grid-template-rows: auto minmax(150px, 1fr) auto auto;
+    gap: 10px;
   }
 
   .scene__visual {
-    min-height: 190px;
-    gap: 10px;
+    min-height: 160px;
+    gap: 8px;
     align-content: center;
   }
 
+  .scene__status {
+    font-size: clamp(0.48rem, 2.5vw, 0.64rem);
+    line-height: 1.55;
+  }
+
   .character-card {
-    width: clamp(64px, 28vw, 102px);
-    padding: 8px;
-    gap: 8px;
+    width: clamp(58px, 25vw, 92px);
+    padding: 7px;
+    gap: 6px;
   }
 
   .avatar {
-    width: clamp(58px, 22vw, 86px);
+    width: clamp(50px, 20vw, 76px);
     border-width: 3px;
   }
 
   .character-name {
-    font-size: clamp(0.42rem, 2.4vw, 0.58rem);
+    font-size: clamp(0.38rem, 2.15vw, 0.52rem);
+    line-height: 1.45;
   }
 
   .legendary-item {
-    width: min(84vw, 220px);
+    width: min(78vw, 200px);
+    gap: 10px;
   }
 
   .legendary-item__frame {
-    width: min(72vw, 190px);
+    width: min(66vw, 176px);
   }
 
   .dialogue-box {
+    padding: 13px 12px;
     box-shadow: 5px 5px 0 var(--shadow);
+  }
+
+  .dialogue-box__label {
+    font-size: clamp(0.45rem, 2.4vw, 0.6rem);
+    line-height: 1.55;
+  }
+
+  .dialogue-box__title {
+    margin-top: 8px;
+    font-size: clamp(0.9rem, 5.2vw, 1.35rem);
+    line-height: 1.35;
+  }
+
+  .dialogue-box__text {
+    margin-top: 9px;
+    font-size: clamp(0.5rem, 2.8vw, 0.68rem);
+    line-height: 1.75;
+  }
+
+  .scene__actions {
+    gap: 9px;
+  }
+
+  .start-button,
+  .share-button {
+    min-width: min(100%, 196px);
+    min-height: 46px;
+    padding: 12px 16px;
+    border-width: 3px;
+    font-size: clamp(0.52rem, 2.6vw, 0.66rem);
+    box-shadow:
+      inset -5px -5px 0 rgba(0, 0, 0, 0.22),
+      inset 5px 5px 0 rgba(255, 255, 255, 0.18),
+      0 0 0 3px var(--color-shadow),
+      5px 5px 0 var(--shadow);
+  }
+
+  .share-button {
+    min-width: min(100%, 170px);
+  }
+
+  .scene.is-duplicate-glitch .dialogue-box__title {
+    font-size: clamp(0.66rem, 3.7vw, 1rem);
+    line-height: 1.7;
+  }
+
+  .scene.is-achievement .scene__visual {
+    min-height: 345px;
+  }
+}
+
+@media (min-width: 621px) and (max-height: 760px) {
+  .game-shell {
+    padding: 18px;
+  }
+
+  .screen-frame {
+    min-height: calc(100svh - 76px);
+    padding: 12px;
+    box-shadow:
+      0 0 0 5px var(--shadow),
+      0 0 0 8px var(--cyan),
+      0 14px 0 var(--shadow);
+  }
+
+  .scene {
+    min-height: calc(100svh - 108px);
+    padding: 22px;
+    gap: 12px;
+  }
+
+  .scene__visual {
+    min-height: 145px;
+    gap: 14px;
+  }
+
+  .character-card {
+    width: clamp(76px, 10vw, 112px);
+    padding: 8px;
+    gap: 7px;
+  }
+
+  .avatar {
+    width: clamp(68px, 9vw, 96px);
+  }
+
+  .dialogue-box {
+    padding: 16px 20px;
+  }
+
+  .dialogue-box__title {
+    margin-top: 8px;
+    font-size: clamp(0.95rem, 3vw, 1.65rem);
+    line-height: 1.35;
+  }
+
+  .dialogue-box__text {
+    margin-top: 9px;
+    font-size: clamp(0.56rem, 1.4vw, 0.76rem);
+    line-height: 1.65;
+  }
+
+  .start-button,
+  .share-button {
+    min-height: 46px;
+    padding: 12px 18px;
+  }
+}
+
+@media (max-width: 430px) and (min-aspect-ratio: 9 / 20) {
+  .scene.is-achievement .character-card {
+    width: clamp(56px, 24vw, 82px);
+  }
+
+  .scene.is-achievement .avatar {
+    width: clamp(48px, 19vw, 68px);
+  }
+}
+
+@media (orientation: portrait) and (max-width: 620px) {
+  .scene.is-achievement {
+    gap: 8px;
+  }
+
+  .scene.is-achievement .dialogue-box__title {
+    font-size: clamp(1rem, 5.5vw, 1.45rem);
+  }
+
+  .scene.is-achievement .dialogue-box__text {
+    font-size: clamp(0.5rem, 2.7vw, 0.66rem);
   }
 }
 
@@ -982,5 +1310,14 @@ body::after {
     animation-duration: 1ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 1ms !important;
+  }
+
+  .scene.is-error,
+  .scene.is-glitch-strong,
+  .scene.is-blackout.is-wait-glitch,
+  .scene.is-blackout.is-wait-glitch .dialogue-box,
+  .scene.is-glitch-strong .dialogue-box,
+  .scene.is-glitch-strong .scene__visual {
+    animation: none !important;
   }
 }
