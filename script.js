@@ -1,6 +1,8 @@
 const assetPath = "assets/img/";
 const itemPath = "assets/img/";
 const soundPath = "assets/audio/";
+const backgroundMusicFile = "music.mp3";
+const backgroundMusicVolume = 0.4;
 
 const soundFiles = {
   start: "start.mp3",
@@ -8,6 +10,7 @@ const soundFiles = {
   unlock: "level-up.mp3",
   item: "item-found.mp3",
   error: "glitch.mp3",
+  win: "win.mp3",
 };
 
 const sharePayload = {
@@ -146,6 +149,7 @@ let sceneIndex = 0;
 let audioContext;
 let replayClicks = 0;
 const audioCache = new Map();
+let backgroundMusic;
 let sceneTimers = [];
 
 const sceneElement = document.querySelector("#scene");
@@ -466,6 +470,21 @@ function playSoundFile(type) {
   });
 }
 
+function playBackgroundMusic() {
+  if (!backgroundMusic) {
+    backgroundMusic = new Audio(`${soundPath}${backgroundMusicFile}`);
+    backgroundMusic.loop = true;
+    backgroundMusic.preload = "auto";
+    backgroundMusic.volume = backgroundMusicVolume;
+  }
+
+  if (backgroundMusic.paused) {
+    backgroundMusic.play().catch(() => {
+      // Background music is optional; effects and reveal must keep working.
+    });
+  }
+}
+
 function playGeneratedTone(type = "advance") {
   try {
     audioContext ||= new AudioContext();
@@ -499,6 +518,8 @@ function playGeneratedTone(type = "advance") {
 }
 
 function playTone(type = "advance") {
+  playBackgroundMusic();
+
   try {
     playSoundFile(type).catch(() => {
       playGeneratedTone(type);
@@ -548,7 +569,7 @@ continueButton.addEventListener("click", () => {
 
   sceneIndex = isLastScene ? 0 : sceneIndex + 1;
   renderScene();
-  playTone(wasStartScreen ? "start" : scenes[sceneIndex].tone);
+  playTone(scenes[sceneIndex].isFinal ? "win" : wasStartScreen ? "start" : scenes[sceneIndex].tone);
 });
 
 shareButton.addEventListener("click", shareReveal);
