@@ -1,108 +1,116 @@
 const assetPath = "assets/img/";
+const itemPath = "assets/img/";
 const soundPath = "assets/audio/";
 const soundFiles = {
   start: "start.mp3",
   advance: "select.mp3",
   unlock: "level-up.mp3",
+  item: "item-found.mp3",
   error: "glitch.mp3",
 };
 
-// Character definitions are shared by every scene and support image fallbacks.
+// Definiciones compartidas por las escenas, con reemplazos visuales si faltan imágenes.
 const party = {
   simon: { name: "Simón", image: "simon.png", color: "#42e8ff" },
   agus: { name: "Agus", image: "agus.png", color: "#ffd166" },
   alma: { name: "Alma", image: "alma.png", color: "#ff8ad8" },
-  baby1: { name: "Baby 1", image: "baby1.png", color: "#9dff5b" },
-  baby2: { name: "Baby 2", image: "baby2.png", color: "#b7a4ff" },
-  ultrasound: { name: "Scan", image: "ultrasound.png", color: "#91a3c7" },
+  baby1: { name: "Jugador 4", image: "baby1.png", color: "#9dff5b" },
+  baby2: { name: "Jugador 5", image: "baby2.png", color: "#b7a4ff" },
 };
 
-// Each click advances through this scene list in order.
+const items = {
+  ultrasound: { name: "Ecografía", caption: "Primera eco", image: "ultrasound.png", color: "#ffd166" },
+};
+
+// Cada clic avanza por esta lista de escenas en orden.
 const scenes = [
   {
-    status: "SAVE FILE 2026",
+    status: "PARTIDA 2026",
     label: "FAMILIA YAGAS",
-    title: "SAVE FILE 2026",
-    text: "PRESS START",
-    button: "PRESS START",
+    title: "PARTIDA 2026",
+    text: "PRESIONÁ INICIAR",
+    button: "PRESIONÁ INICIAR",
     characters: [],
   },
   {
-    status: "PARTY STATUS",
-    label: "CURRENT PARTY",
+    status: "ESTADO DEL GRUPO",
+    label: "GRUPO ACTUAL",
     title: "Simón, Agus, Alma",
-    text: "Party Size: 3",
-    button: "CONTINUE",
+    text: "Tamaño del grupo: 3",
+    button: "CONTINUAR",
     characters: ["simon", "agus", "alma"],
   },
   {
-    status: "QUEST LOG",
-    label: "QUEST COMPLETED",
-    title: "Raise Alma",
-    text: "Reward available",
-    button: "CONTINUE",
+    status: "REGISTRO DE MISIÓN",
+    label: "MISIÓN COMPLETADA",
+    title: "Criar a Alma",
+    text: "Recompensa disponible",
+    button: "CONTINUAR",
     characters: ["simon", "agus", "alma"],
   },
   {
-    status: "SAVE DATA",
-    label: "SYSTEM",
-    title: "New save data detected...",
-    text: "Reading new family slot",
-    button: "CONTINUE",
+    status: "OBJETO ENCONTRADO",
+    label: "OBJETO LEGENDARIO",
+    title: "Ecografía adquirida",
+    text: "Se detectó una nueva señal...",
+    button: "CONTINUAR",
     modifier: "is-save-detected",
-    characters: ["ultrasound"],
+    items: ["ultrasound"],
+    characters: [],
+    tone: "item",
   },
   {
-    status: "NEW CHARACTER",
-    label: "UNLOCKED",
-    title: "Player 4 joined",
-    text: "Ultrasound item unlocked\nParty Size: 4",
-    button: "CONTINUE",
+    status: "NUEVO PERSONAJE",
+    label: "DESBLOQUEADO",
+    title: "Jugador 4 se unió",
+    text: "Tamaño del grupo: 4",
+    button: "CONTINUAR",
     buttonDelay: 2500,
     modifier: "is-emotional",
-    characters: ["simon", "agus", "alma", "ultrasound", "baby1"],
+    characters: ["simon", "agus", "alma", "baby1"],
     tone: "unlock",
   },
   {
     status: "",
     label: "",
-    title: "Wait...",
+    title: "Esperá...",
     text: "",
-    button: "CONTINUE",
+    button: "CONTINUAR",
     buttonDelay: 2000,
     modifier: "is-blackout",
     characters: [],
   },
   {
-    status: "SYSTEM ALERT",
+    status: "ALERTA DEL SISTEMA",
     label: "ERROR",
-    title: "Player 4 joined\nPlayer 4 joined\nPlayer 5 joined",
-    text: "Party Size: 4",
-    button: "CONTINUE",
+    title: "Jugador 4 se unió\nJugador 4 se unió\nJugador 5 se unió",
+    text: "Tamaño del grupo: 4",
+    button: "CONTINUAR",
     buttonDelay: 2400,
     modifier: "is-error is-glitch-strong is-duplicate-glitch",
     timedUpdates: [
-      { delay: 1000, status: "SYSTEM ALERT", label: "ERROR", title: "RECALCULATING...", text: "Party Size: 4" },
-      { delay: 1650, status: "SYSTEM OVERRIDE", label: "ERROR", title: "SECOND SIGNAL FOUND", text: "Party Size: 5" },
+      { delay: 1000, status: "ALERTA DEL SISTEMA", label: "ERROR", title: "RECALCULANDO...", text: "Tamaño del grupo: 4", tone: "error" },
+      { delay: 1650, status: "AJUSTE DEL SISTEMA", label: "ERROR", title: "SEGUNDA SEÑAL DETECTADA", text: "Tamaño del grupo: 5", tone: "unlock" },
     ],
-    characters: ["ultrasound"],
+    items: ["ultrasound"],
+    characters: [],
     tone: "error",
   },
   {
-    status: "NEW CHARACTER",
-    label: "UNLOCKED",
-    title: "Player 5 joined",
-    text: "Double reward confirmed.",
-    button: "CONTINUE",
+    status: "NUEVO PERSONAJE",
+    label: "DESBLOQUEADO",
+    title: "Jugador 5 se unió",
+    text: "Recompensa doble confirmada.",
+    button: "CONTINUAR",
     characters: ["simon", "agus", "alma", "baby1", "baby2"],
     tone: "unlock",
   },
   {
-    status: "EXPANSION READY",
-    label: "INSTALL COMPLETE",
+    status: "EXPANSIÓN LISTA",
+    label: "INSTALACIÓN COMPLETA",
     title: "SON MELLIZOS",
-    text: "Player 4 & Player 5 joining soon\nFamily Party Size: 5",
-    button: "PLAY AGAIN",
+    text: "Jugador 4 y Jugador 5 se suman pronto\nTamaño del grupo familiar: 5",
+    button: "JUGAR DE NUEVO",
     characters: ["simon", "agus", "alma", "baby1", "baby2"],
   },
 ];
@@ -156,8 +164,41 @@ function createAvatar(characterKey) {
   return card;
 }
 
+function createItemCard(itemKey) {
+  const item = items[itemKey];
+  const card = document.createElement("figure");
+  const frame = document.createElement("div");
+  const image = document.createElement("img");
+  const fallback = document.createElement("span");
+  const caption = document.createElement("figcaption");
+
+  card.className = "legendary-item";
+  frame.className = "legendary-item__frame";
+  frame.style.setProperty("--item-color", item.color);
+  fallback.className = "legendary-item__fallback";
+  fallback.textContent = "OBJETO";
+
+  image.src = `${itemPath}${item.image}`;
+  image.alt = item.name;
+  image.addEventListener("load", () => {
+    frame.classList.add("legendary-item__frame--loaded");
+  });
+  image.addEventListener("error", () => {
+    frame.classList.add("legendary-item__frame--missing");
+  });
+
+  caption.className = "legendary-item__caption";
+  caption.textContent = item.caption || item.name;
+
+  frame.append(image, fallback);
+  card.append(frame, caption);
+  return card;
+}
+
 function renderScene() {
   const scene = scenes[sceneIndex];
+  const sceneItems = scene.items ?? [];
+  const sceneCharacters = scene.characters ?? [];
 
   clearSceneTimers();
   sceneElement.className = "scene is-entering";
@@ -173,7 +214,10 @@ function renderScene() {
   continueButton.disabled = Boolean(scene.buttonDelay);
   continueButton.classList.toggle("is-hidden", Boolean(scene.buttonDelay));
 
-  sceneVisual.replaceChildren(...scene.characters.map(createAvatar));
+  sceneVisual.replaceChildren(
+    ...sceneItems.map(createItemCard),
+    ...sceneCharacters.map(createAvatar)
+  );
 
   if (scene.buttonDelay) {
     sceneTimers.push(window.setTimeout(() => {
@@ -190,7 +234,7 @@ function renderScene() {
         sceneLabel.textContent = update.label;
         sceneTitle.textContent = update.title;
         sceneText.textContent = update.text;
-        playTone(update.text === "Party Size: 5" ? "unlock" : "error");
+        playTone(update.tone || "error");
       }, update.delay));
     });
   }
@@ -211,12 +255,18 @@ function playSoundFile(type) {
 
   const audio = audioCache.get(file);
   audio.currentTime = 0;
-  return audio.play();
+  return audio.play().catch((error) => {
+    if (type === "item" && file !== soundFiles.unlock) {
+      return playSoundFile("unlock");
+    }
+
+    throw error;
+  });
 }
 
 function playGeneratedTone(type = "advance") {
   try {
-    // Audio starts only after a user gesture, so browsers can allow it safely.
+    // El audio arranca después de una acción del usuario para que el navegador lo permita.
     audioContext ||= new AudioContext();
     const oscillator = audioContext.createOscillator();
     const gain = audioContext.createGain();
@@ -224,6 +274,7 @@ function playGeneratedTone(type = "advance") {
     const frequencies = {
       advance: [520, 780],
       unlock: [660, 990],
+      item: [740, 1180],
       error: [110, 70],
     };
     const [startFrequency, endFrequency] = frequencies[type] || frequencies.advance;
@@ -241,7 +292,7 @@ function playGeneratedTone(type = "advance") {
     oscillator.start(now);
     oscillator.stop(now + 0.18);
   } catch {
-    // Audio is decorative; blocked or unsupported audio should not interrupt the reveal.
+    // El audio es decorativo; si falla, no debe interrumpir la revelación.
   }
 }
 
