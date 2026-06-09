@@ -46,27 +46,25 @@ const scenes = [
     status: "NEW CHARACTER",
     label: "UNLOCKED",
     title: "Player 4 joined",
-    text: "A new adventure slot has appeared.",
+    text: "Party Size: 4",
     button: "CONTINUE",
+    buttonDelay: 2500,
+    modifier: "is-emotional",
     characters: ["simon", "agus", "alma", "baby1"],
     tone: "unlock",
-  },
-  {
-    status: "SYSTEM PAUSED",
-    label: "WAIT",
-    title: "...",
-    text: "Something else is loading",
-    button: "CONTINUE",
-    modifier: "is-pause",
-    characters: ["ultrasound"],
   },
   {
     status: "SYSTEM ALERT",
     label: "ERROR",
     title: "ERROR",
-    text: "Recalculating...",
+    text: "Party Size: 4",
     button: "CONTINUE",
-    modifier: "is-error",
+    buttonDelay: 2400,
+    modifier: "is-error is-glitch-strong",
+    timedUpdates: [
+      { delay: 650, status: "SYSTEM ALERT", label: "ERROR", title: "RECALCULATING...", text: "Party Size: 4" },
+      { delay: 1450, status: "SYSTEM OVERRIDE", label: "ERROR", title: "SECOND SIGNAL FOUND", text: "Party Size: 5" },
+    ],
     characters: ["ultrasound"],
     tone: "error",
   },
@@ -83,7 +81,7 @@ const scenes = [
     status: "EXPANSION READY",
     label: "INSTALL COMPLETE",
     title: "TWINS EXPANSION PACK INSTALLED",
-    text: "Party Size: 5 - Game continues...",
+    text: "Son mellizos - Party Size: 5 - Game continues...",
     button: "REPLAY",
     characters: ["simon", "agus", "alma", "baby1", "baby2"],
   },
@@ -92,6 +90,7 @@ const scenes = [
 let sceneIndex = 0;
 let audioContext;
 const audioCache = new Map();
+let sceneTimers = [];
 
 const sceneElement = document.querySelector("#scene");
 const sceneStatus = document.querySelector("#sceneStatus");
@@ -100,6 +99,11 @@ const sceneLabel = document.querySelector("#sceneLabel");
 const sceneTitle = document.querySelector("#sceneTitle");
 const sceneText = document.querySelector("#sceneText");
 const continueButton = document.querySelector("#continueButton");
+
+function clearSceneTimers() {
+  sceneTimers.forEach((timer) => window.clearTimeout(timer));
+  sceneTimers = [];
+}
 
 function createAvatar(characterKey) {
   const character = party[characterKey];
@@ -135,6 +139,7 @@ function createAvatar(characterKey) {
 function renderScene() {
   const scene = scenes[sceneIndex];
 
+  clearSceneTimers();
   sceneElement.className = "scene is-entering";
   if (scene.modifier) {
     sceneElement.classList.add(scene.modifier);
@@ -145,8 +150,30 @@ function renderScene() {
   sceneTitle.textContent = scene.title;
   sceneText.textContent = scene.text;
   continueButton.textContent = scene.button;
+  continueButton.disabled = Boolean(scene.buttonDelay);
+  continueButton.classList.toggle("is-hidden", Boolean(scene.buttonDelay));
 
   sceneVisual.replaceChildren(...scene.characters.map(createAvatar));
+
+  if (scene.buttonDelay) {
+    sceneTimers.push(window.setTimeout(() => {
+      continueButton.disabled = false;
+      continueButton.classList.remove("is-hidden");
+      continueButton.focus({ preventScroll: true });
+    }, scene.buttonDelay));
+  }
+
+  if (scene.timedUpdates) {
+    scene.timedUpdates.forEach((update) => {
+      sceneTimers.push(window.setTimeout(() => {
+        sceneStatus.textContent = update.status;
+        sceneLabel.textContent = update.label;
+        sceneTitle.textContent = update.title;
+        sceneText.textContent = update.text;
+        playTone(update.text === "Party Size: 5" ? "unlock" : "error");
+      }, update.delay));
+    });
+  }
 
   window.setTimeout(() => {
     sceneElement.classList.remove("is-entering");
