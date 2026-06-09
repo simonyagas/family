@@ -186,7 +186,7 @@ body::after {
   min-height: calc(100svh - clamp(116px, 12vw, 150px));
   padding: clamp(18px, 4vw, 46px);
   overflow: hidden;
-  grid-template-rows: auto minmax(150px, 1fr) auto auto;
+  grid-template-rows: auto minmax(190px, auto) auto auto;
   gap: clamp(14px, 3vw, 28px);
   background:
     linear-gradient(90deg, rgba(255, 255, 255, 0.025) 50%, transparent 50%) 0 0 / 8px 8px,
@@ -233,6 +233,356 @@ body::after {
   min-height: 210px;
   gap: clamp(10px, 2.5vw, 28px);
   flex-wrap: wrap;
+}
+
+.platform-stage {
+  position: relative;
+  width: min(100%, 820px);
+  height: clamp(210px, 26vw, 280px);
+  overflow: hidden;
+  background:
+    linear-gradient(180deg, rgba(66, 232, 255, 0.16), transparent 44%),
+    linear-gradient(90deg, rgba(255, 248, 217, 0.04) 50%, transparent 50%) 0 0 / 10px 10px,
+    #0a1022;
+  border: 4px solid rgba(255, 248, 217, 0.7);
+  box-shadow:
+    0 0 0 5px var(--color-shadow),
+    inset 0 0 0 4px rgba(66, 232, 255, 0.1),
+    inset 0 -48px 0 rgba(3, 4, 10, 0.34);
+  image-rendering: pixelated;
+}
+
+.platform-stage::before,
+.platform-stage::after {
+  position: absolute;
+  content: "";
+  pointer-events: none;
+}
+
+.platform-stage::before {
+  inset: 0;
+  opacity: 0.5;
+  background:
+    linear-gradient(90deg, transparent 0 9%, rgba(255, 209, 102, 0.22) 9% 11%, transparent 11% 100%) 0 58% / 180px 22px repeat-x,
+    linear-gradient(90deg, transparent 0 58%, rgba(157, 255, 91, 0.2) 58% 61%, transparent 61% 100%) 0 38% / 260px 18px repeat-x;
+  animation: stageParallax 7s linear infinite;
+}
+
+.platform-stage::after {
+  right: 7%;
+  bottom: 76px;
+  width: 76px;
+  height: 18px;
+  background: var(--color-panel-light);
+  box-shadow:
+    0 0 0 3px var(--color-shadow),
+    -280px -44px 0 var(--color-panel-light),
+    -280px -44px 0 3px var(--color-shadow),
+    -478px 10px 0 var(--color-panel-light),
+    -478px 10px 0 3px var(--color-shadow);
+}
+
+.platform-stage__sky {
+  position: absolute;
+  inset: 0 0 68px;
+  background:
+    radial-gradient(circle at 18% 22%, var(--color-amber) 0 7px, transparent 8px),
+    linear-gradient(90deg, transparent 0 12px, rgba(66, 232, 255, 0.18) 12px 30px, transparent 30px 100%) 0 30px / 210px 38px repeat-x,
+    linear-gradient(90deg, transparent 0 34px, rgba(255, 248, 217, 0.16) 34px 48px, transparent 48px 100%) 88px 74px / 260px 32px repeat-x;
+  animation: stageSky 11s linear infinite;
+}
+
+.platform-stage__hud {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 3;
+  display: flex;
+  max-width: calc(100% - 20px);
+  gap: 8px;
+}
+
+.stage-portrait {
+  display: grid;
+  width: clamp(58px, 8vw, 76px);
+  margin: 0;
+  gap: 4px;
+  justify-items: center;
+  animation: popIn 360ms steps(4, end) both;
+}
+
+.stage-portrait__frame {
+  position: relative;
+  display: grid;
+  width: clamp(42px, 6vw, 54px);
+  aspect-ratio: 1;
+  overflow: hidden;
+  place-items: center;
+  color: #07101d;
+  background: var(--player-color, var(--color-cyan));
+  border: 3px solid var(--color-ink);
+  box-shadow:
+    0 0 0 3px var(--color-shadow),
+    inset -6px -6px 0 rgba(0, 0, 0, 0.18);
+}
+
+.stage-portrait__frame img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  image-rendering: pixelated;
+}
+
+.stage-portrait__fallback {
+  position: absolute;
+  z-index: 1;
+  font-size: 1rem;
+}
+
+.stage-portrait__frame--loaded .stage-portrait__fallback,
+.stage-portrait__frame--missing img {
+  display: none;
+}
+
+.stage-portrait__name {
+  max-width: 100%;
+  color: var(--color-ink);
+  font-size: clamp(0.42rem, 1vw, 0.54rem);
+  line-height: 1.2;
+  text-align: center;
+  text-shadow: 2px 2px 0 var(--color-shadow);
+}
+
+.platform-stage__track {
+  position: absolute;
+  right: 0;
+  bottom: 48px;
+  left: 0;
+  z-index: 2;
+  height: 150px;
+}
+
+.platform-stage__ground {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 2;
+  height: 58px;
+  background:
+    linear-gradient(90deg, rgba(255, 248, 217, 0.24) 0 12px, transparent 12px 24px) 0 0 / 24px 12px,
+    linear-gradient(180deg, #1b2441 0 16px, #0c6d4f 16px 24px, #063c35 24px 100%);
+  border-top: 4px solid var(--color-lime);
+  box-shadow: inset 0 8px 0 rgba(255, 248, 217, 0.09);
+}
+
+.platform-stage__prompt {
+  position: absolute;
+  bottom: 38px;
+  left: 50%;
+  color: var(--color-amber);
+  font-size: clamp(0.74rem, 2vw, 1rem);
+  line-height: 1.4;
+  text-shadow: 3px 3px 0 var(--color-shadow);
+  transform: translateX(-50%);
+  animation: blink 900ms steps(2, end) infinite;
+}
+
+.player-sprite {
+  position: absolute;
+  bottom: 8px;
+  left: calc(16% + var(--player-offset, 0px));
+  display: block;
+  width: 42px;
+  height: 82px;
+  filter: drop-shadow(5px 5px 0 rgba(0, 0, 0, 0.34));
+  animation:
+    playerEnter 950ms steps(8, end) both,
+    playerHop 640ms steps(2, end) infinite;
+  animation-delay:
+    var(--player-enter-delay, 0ms),
+    var(--player-hop-delay, 950ms);
+}
+
+.player-sprite__shadow,
+.player-sprite__body,
+.player-sprite__head,
+.player-sprite__name {
+  position: absolute;
+  display: block;
+}
+
+.player-sprite__shadow {
+  right: 2px;
+  bottom: -4px;
+  left: 2px;
+  height: 7px;
+  background: rgba(0, 0, 0, 0.46);
+}
+
+.player-sprite__body {
+  right: 8px;
+  bottom: 18px;
+  left: 8px;
+  height: 34px;
+  background: var(--player-color, var(--color-cyan));
+  box-shadow:
+    inset -7px -7px 0 rgba(0, 0, 0, 0.2),
+    -10px 8px 0 #101529,
+    10px 8px 0 #101529,
+    -6px 34px 0 #101529,
+    8px 34px 0 #101529;
+}
+
+.player-sprite__body::before,
+.player-sprite__body::after {
+  position: absolute;
+  bottom: -25px;
+  width: 9px;
+  height: 24px;
+  background: #101529;
+  content: "";
+  animation: playerWalkLeg 640ms steps(2, end) infinite;
+}
+
+.player-sprite__body::before {
+  left: 2px;
+}
+
+.player-sprite__body::after {
+  right: 2px;
+  animation-delay: 320ms;
+}
+
+.player-sprite__head {
+  top: 5px;
+  left: 9px;
+  width: 24px;
+  height: 24px;
+  background: #ffe0b5;
+  border: 3px solid #101529;
+  box-shadow:
+    inset -5px -4px 0 rgba(0, 0, 0, 0.12),
+    6px -5px 0 -2px var(--player-color, var(--color-cyan));
+}
+
+.player-sprite__head::before {
+  position: absolute;
+  top: 7px;
+  left: 5px;
+  width: 4px;
+  height: 4px;
+  background: #101529;
+  box-shadow: 9px 0 0 #101529, 5px 8px 0 -1px #101529;
+  content: "";
+}
+
+.player-sprite__name {
+  bottom: 90px;
+  left: 50%;
+  min-width: 76px;
+  color: var(--color-ink);
+  font-size: 0.48rem;
+  line-height: 1.25;
+  text-align: center;
+  text-shadow: 2px 2px 0 var(--color-shadow);
+  transform: translateX(-50%);
+}
+
+.player-sprite--mystery .player-sprite__head {
+  background: #08101d;
+  border-color: var(--player-color, var(--color-lime));
+  box-shadow:
+    0 0 0 3px rgba(255, 248, 217, 0.12),
+    0 0 18px rgba(157, 255, 91, 0.28);
+  animation: mysteryPulse 1.2s steps(2, end) infinite;
+}
+
+.player-sprite--mystery .player-sprite__head::before {
+  background: var(--player-color, var(--color-lime));
+  box-shadow: 9px 0 0 var(--player-color, var(--color-lime)), 5px 8px 0 -1px var(--player-color, var(--color-lime));
+}
+
+.stage-item {
+  position: absolute;
+  right: 18%;
+  bottom: 28px;
+  z-index: 1;
+  display: grid;
+  margin: 0;
+  animation: itemFound 900ms steps(7, end) both;
+}
+
+.stage-item__frame {
+  position: relative;
+  display: grid;
+  width: clamp(74px, 11vw, 104px);
+  aspect-ratio: 1.16;
+  overflow: hidden;
+  place-items: center;
+  color: #07101d;
+  background: rgba(255, 209, 102, 0.22);
+  border: 4px solid var(--item-color, var(--color-amber));
+  box-shadow:
+    0 0 0 4px var(--color-shadow),
+    0 0 24px rgba(255, 209, 102, 0.28);
+}
+
+.stage-item__frame img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  image-rendering: pixelated;
+}
+
+.stage-item__fallback {
+  position: absolute;
+  z-index: 1;
+  font-size: 0.65rem;
+}
+
+.stage-item__frame--loaded .stage-item__fallback,
+.stage-item__frame--missing img {
+  display: none;
+}
+
+.platform-stage--quest .player-sprite,
+.platform-stage--item .player-sprite {
+  animation:
+    playerRunToItem 1.35s steps(10, end) both,
+    playerHop 560ms steps(2, end) infinite;
+  animation-delay:
+    var(--player-run-delay, 0ms),
+    var(--player-run-hop-delay, 1350ms);
+}
+
+.platform-stage--new-player .player-sprite--mystery {
+  animation:
+    playerUnlock 950ms steps(7, end) both,
+    playerHop 720ms steps(2, end) infinite;
+  animation-delay:
+    var(--player-unlock-delay, 0ms),
+    var(--player-unlock-hop-delay, 1000ms);
+}
+
+.platform-stage--glitch,
+.platform-stage--recalculate {
+  border-color: rgba(255, 63, 95, 0.72);
+  animation: hardGlitch 260ms steps(2, end) infinite;
+}
+
+.platform-stage--glitch .platform-stage__ground,
+.platform-stage--recalculate .platform-stage__ground {
+  filter: hue-rotate(130deg);
+}
+
+.platform-stage--final .player-sprite {
+  animation:
+    playerFinalMarch 1.6s steps(12, end) both,
+    playerHop 520ms steps(2, end) infinite;
+  animation-delay:
+    var(--player-final-delay, 0ms),
+    var(--player-final-hop-delay, 1600ms);
 }
 
 .legendary-item {
@@ -894,6 +1244,127 @@ body::after {
   }
 }
 
+@keyframes stageParallax {
+  from {
+    background-position: 0 58%, 0 38%;
+  }
+  to {
+    background-position: -360px 58%, -520px 38%;
+  }
+}
+
+@keyframes stageSky {
+  from {
+    background-position: 0 0, 0 30px, 88px 74px;
+  }
+  to {
+    background-position: 0 0, -420px 30px, -432px 74px;
+  }
+}
+
+@keyframes playerEnter {
+  from {
+    opacity: 0;
+    transform: translateX(-210px);
+  }
+  72% {
+    opacity: 1;
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes playerRunToItem {
+  from {
+    opacity: 1;
+    transform: translateX(-80px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(150px);
+  }
+}
+
+@keyframes playerUnlock {
+  from {
+    opacity: 0;
+    transform: translateY(-60px) scale(0.6);
+  }
+  60% {
+    opacity: 1;
+    transform: translateY(8px) scale(1.06);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes playerFinalMarch {
+  from {
+    opacity: 1;
+    transform: translateX(-120px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(84px);
+  }
+}
+
+@keyframes playerRunToItemMobile {
+  from {
+    opacity: 1;
+    transform: translateX(-54px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(74px);
+  }
+}
+
+@keyframes playerFinalMarchMobile {
+  from {
+    opacity: 1;
+    transform: translateX(-72px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(24px);
+  }
+}
+
+@keyframes playerHop {
+  0%,
+  100% {
+    margin-bottom: 0;
+  }
+  50% {
+    margin-bottom: 6px;
+  }
+}
+
+@keyframes playerWalkLeg {
+  0%,
+  100% {
+    transform: translateX(-3px);
+  }
+  50% {
+    transform: translateX(4px);
+  }
+}
+
+@keyframes mysteryPulse {
+  0%,
+  100% {
+    filter: brightness(1);
+  }
+  50% {
+    filter: brightness(1.8);
+  }
+}
+
 @keyframes itemFound {
   0% {
     opacity: 0;
@@ -1168,7 +1639,7 @@ body::after {
   .scene {
     min-height: calc(100svh - 40px);
     padding: 13px 11px;
-    grid-template-rows: auto minmax(128px, 1fr) auto auto;
+    grid-template-rows: auto minmax(150px, auto) auto auto;
     gap: 8px;
   }
 
@@ -1176,6 +1647,143 @@ body::after {
     min-height: 140px;
     gap: 7px;
     align-content: center;
+  }
+
+  .platform-stage {
+    height: clamp(188px, 48vw, 230px);
+    border-width: 3px;
+    box-shadow:
+      0 0 0 3px var(--color-shadow),
+      inset 0 0 0 3px rgba(66, 232, 255, 0.1),
+      inset 0 -42px 0 rgba(3, 4, 10, 0.34);
+  }
+
+  .platform-stage::after {
+    right: -10px;
+    bottom: 62px;
+    width: 58px;
+    height: 14px;
+    box-shadow:
+      0 0 0 3px var(--color-shadow),
+      -155px -34px 0 var(--color-panel-light),
+      -155px -34px 0 3px var(--color-shadow),
+      -265px 8px 0 var(--color-panel-light),
+      -265px 8px 0 3px var(--color-shadow);
+  }
+
+  .platform-stage__hud {
+    top: 7px;
+    left: 7px;
+    gap: 5px;
+  }
+
+  .stage-portrait {
+    width: 48px;
+  }
+
+  .stage-portrait__frame {
+    width: 34px;
+    border-width: 2px;
+    box-shadow:
+      0 0 0 2px var(--color-shadow),
+      inset -4px -4px 0 rgba(0, 0, 0, 0.18);
+  }
+
+  .stage-portrait__name {
+    font-size: 0.38rem;
+  }
+
+  .platform-stage__track {
+    bottom: 40px;
+    height: 124px;
+  }
+
+  .platform-stage__ground {
+    height: 48px;
+  }
+
+  .player-sprite {
+    left: calc(8% + var(--player-offset-mobile, 0px));
+    width: 32px;
+    height: 66px;
+  }
+
+  .player-sprite__body {
+    right: 6px;
+    bottom: 15px;
+    left: 6px;
+    height: 28px;
+    box-shadow:
+      inset -5px -5px 0 rgba(0, 0, 0, 0.2),
+      -7px 6px 0 #101529,
+      7px 6px 0 #101529,
+      -4px 28px 0 #101529,
+      6px 28px 0 #101529;
+  }
+
+  .player-sprite__body::before,
+  .player-sprite__body::after {
+    bottom: -20px;
+    width: 7px;
+    height: 20px;
+  }
+
+  .player-sprite__head {
+    top: 4px;
+    left: 6px;
+    width: 20px;
+    height: 20px;
+    border-width: 2px;
+  }
+
+  .player-sprite__head::before {
+    top: 6px;
+    left: 4px;
+    width: 3px;
+    height: 3px;
+    box-shadow: 8px 0 0 #101529, 4px 7px 0 -1px #101529;
+  }
+
+  .player-sprite--mystery .player-sprite__head::before {
+    box-shadow: 8px 0 0 var(--player-color, var(--color-lime)), 4px 7px 0 -1px var(--player-color, var(--color-lime));
+  }
+
+  .player-sprite__name {
+    bottom: 72px;
+    min-width: 62px;
+    font-size: 0.39rem;
+  }
+
+  .stage-item {
+    right: 7%;
+    bottom: 22px;
+  }
+
+  .stage-item__frame {
+    width: 66px;
+    border-width: 3px;
+    box-shadow:
+      0 0 0 3px var(--color-shadow),
+      0 0 18px rgba(255, 209, 102, 0.28);
+  }
+
+  .platform-stage--quest .player-sprite,
+  .platform-stage--item .player-sprite {
+    animation:
+      playerRunToItemMobile 1.35s steps(10, end) both,
+      playerHop 560ms steps(2, end) infinite;
+    animation-delay:
+      var(--player-run-delay, 0ms),
+      var(--player-run-hop-delay, 1350ms);
+  }
+
+  .platform-stage--final .player-sprite {
+    animation:
+      playerFinalMarchMobile 1.6s steps(12, end) both,
+      playerHop 520ms steps(2, end) infinite;
+    animation-delay:
+      var(--player-final-delay, 0ms),
+      var(--player-final-hop-delay, 1600ms);
   }
 
   .scene__status {
@@ -1269,7 +1877,7 @@ body::after {
   }
 
   .scene.is-achievement .scene__visual {
-    min-height: 260px;
+    min-height: 210px;
   }
 }
 

@@ -39,6 +39,7 @@ const scenes = [
     title: "PARTIDA 2026",
     text: "NUEVA PARTIDA DISPONIBLE",
     button: "START",
+    stageAction: "title",
     characters: [],
   },
   {
@@ -47,6 +48,7 @@ const scenes = [
     title: "Sim\u00f3n, Agus, Alma",
     text: "Tama\u00f1o del grupo: 3",
     button: "CONTINUAR",
+    stageAction: "enter",
     characters: ["simon", "agus", "alma"],
   },
   {
@@ -55,6 +57,7 @@ const scenes = [
     title: "Criar a Alma",
     text: "Recompensa disponible",
     button: "CONTINUAR",
+    stageAction: "quest",
     characters: ["simon", "agus", "alma"],
   },
   {
@@ -65,7 +68,8 @@ const scenes = [
     button: "CONTINUAR",
     modifier: "is-save-detected",
     items: ["ultrasound"],
-    characters: [],
+    stageAction: "item",
+    characters: ["simon", "agus", "alma"],
     tone: "item",
   },
   {
@@ -76,6 +80,7 @@ const scenes = [
     button: "CONTINUAR",
     buttonDelay: 2500,
     modifier: "is-emotional",
+    stageAction: "new-player",
     characters: ["simon", "agus", "alma", "baby1"],
     tone: "unlock",
   },
@@ -91,6 +96,7 @@ const scenes = [
       { delay: 520, status: "ERROR DE SE\u00d1AL", label: "ERROR", title: "CARGANDO JUGADOR 5...", text: "No cierres la partida", tone: "error" },
       { delay: 1250, status: "SE\u00d1AL INESTABLE", label: "ERROR", title: "SE\u00d1AL INESTABLE", text: "Nueva frecuencia encontrada", tone: "error" },
     ],
+    stageAction: "glitch",
     characters: [],
   },
   {
@@ -107,6 +113,7 @@ const scenes = [
       { delay: 2050, status: "SISTEMA CORREGIDO", label: "NO ERA ERROR", title: "NO ERA ERROR", text: "La partida ven\u00eda con bonus", tone: "unlock" },
     ],
     items: ["ultrasound"],
+    stageAction: "recalculate",
     characters: [],
     tone: "error",
   },
@@ -116,6 +123,7 @@ const scenes = [
     title: "Jugador 5 se uni\u00f3",
     text: "Recompensa doble confirmada.",
     button: "CONTINUAR",
+    stageAction: "new-player",
     characters: ["simon", "agus", "alma", "baby1", "baby2"],
     tone: "unlock",
   },
@@ -127,6 +135,7 @@ const scenes = [
     release: "NUEVA EXPANSI\u00d3N: DICIEMBRE 2026",
     button: "JUGAR DE NUEVO",
     modifier: "is-achievement",
+    stageAction: "final",
     characters: ["simon", "agus", "alma", "baby1", "baby2"],
     isFinal: true,
     tone: "unlock",
@@ -237,6 +246,137 @@ function createItemCard(itemKey) {
   return card;
 }
 
+function createStagePortrait(characterKey) {
+  const character = party[characterKey];
+  const portrait = document.createElement("figure");
+  const frame = document.createElement("span");
+  const image = document.createElement("img");
+  const fallback = document.createElement("span");
+  const caption = document.createElement("figcaption");
+
+  portrait.className = `stage-portrait stage-portrait--${characterKey}`;
+  frame.className = "stage-portrait__frame";
+  frame.style.setProperty("--player-color", character.color);
+  fallback.className = "stage-portrait__fallback";
+  fallback.textContent = character.name.slice(0, 1);
+
+  image.src = `${assetPath}${character.image}`;
+  image.alt = character.name;
+  image.addEventListener("load", () => {
+    frame.classList.add("stage-portrait__frame--loaded");
+  });
+  image.addEventListener("error", () => {
+    frame.classList.add("stage-portrait__frame--missing");
+  });
+
+  caption.className = "stage-portrait__name";
+  caption.textContent = character.name;
+
+  frame.append(image, fallback);
+  portrait.append(frame, caption);
+  return portrait;
+}
+
+function createPlayerSprite(characterKey, index) {
+  const character = party[characterKey];
+  const player = document.createElement("span");
+  const shadow = document.createElement("span");
+  const body = document.createElement("span");
+  const head = document.createElement("span");
+  const name = document.createElement("span");
+
+  player.className = `player-sprite player-sprite--${characterKey}`;
+  if (character.placeholder) {
+    player.classList.add("player-sprite--mystery");
+  }
+
+  player.style.setProperty("--player-color", character.color);
+  player.style.setProperty("--player-index", index);
+  player.style.setProperty("--player-offset", `${index * 56}px`);
+  player.style.setProperty("--player-offset-mobile", `${index * 37}px`);
+  player.style.setProperty("--player-enter-delay", `${index * 110}ms`);
+  player.style.setProperty("--player-hop-delay", `${950 + index * 120}ms`);
+  player.style.setProperty("--player-run-delay", `${index * 90}ms`);
+  player.style.setProperty("--player-run-hop-delay", `${1350 + index * 100}ms`);
+  player.style.setProperty("--player-unlock-delay", `${index * 120}ms`);
+  player.style.setProperty("--player-unlock-hop-delay", `${1000 + index * 100}ms`);
+  player.style.setProperty("--player-final-delay", `${index * 80}ms`);
+  player.style.setProperty("--player-final-hop-delay", `${1600 + index * 90}ms`);
+  shadow.className = "player-sprite__shadow";
+  body.className = "player-sprite__body";
+  head.className = "player-sprite__head";
+  name.className = "player-sprite__name";
+  name.textContent = character.name;
+
+  player.append(shadow, body, head, name);
+  return player;
+}
+
+function createStageItem(itemKey) {
+  const item = items[itemKey];
+  const itemNode = document.createElement("figure");
+  const frame = document.createElement("span");
+  const image = document.createElement("img");
+  const fallback = document.createElement("span");
+
+  itemNode.className = "stage-item";
+  frame.className = "stage-item__frame";
+  frame.style.setProperty("--item-color", item.color);
+  fallback.className = "stage-item__fallback";
+  fallback.textContent = "ECO";
+
+  image.src = `${itemPath}${item.image}`;
+  image.alt = item.name;
+  image.addEventListener("load", () => {
+    frame.classList.add("stage-item__frame--loaded");
+  });
+  image.addEventListener("error", () => {
+    frame.classList.add("stage-item__frame--missing");
+  });
+
+  frame.append(image, fallback);
+  itemNode.append(frame);
+  return itemNode;
+}
+
+function createPlatformStage(scene, sceneCharacters, sceneItems) {
+  const stage = document.createElement("div");
+  const sky = document.createElement("div");
+  const hud = document.createElement("div");
+  const track = document.createElement("div");
+  const ground = document.createElement("div");
+  const prompt = document.createElement("span");
+
+  stage.className = `platform-stage platform-stage--${scene.stageAction || "idle"}`;
+  sky.className = "platform-stage__sky";
+  hud.className = "platform-stage__hud";
+  track.className = "platform-stage__track";
+  ground.className = "platform-stage__ground";
+  prompt.className = "platform-stage__prompt";
+  prompt.textContent = scene.stageAction === "title" ? "PRESS START" : "AUTO PLAY";
+
+  ["simon", "agus", "alma"]
+    .filter((characterKey) => sceneCharacters.includes(characterKey) || scene.isFinal)
+    .forEach((characterKey) => {
+      hud.append(createStagePortrait(characterKey));
+    });
+
+  sceneItems.forEach((itemKey) => {
+    track.append(createStageItem(itemKey));
+  });
+
+  sceneCharacters.forEach((characterKey, index) => {
+    track.append(createPlayerSprite(characterKey, index));
+  });
+
+  if (scene.stageAction === "title") {
+    track.append(prompt);
+  }
+
+  stage.append(sky, hud, track, ground);
+  return stage;
+}
+
 function setShareButtonState(scene) {
   shareButton.hidden = !scene.isFinal;
   shareButton.classList.toggle("is-hidden", !scene.isFinal);
@@ -270,10 +410,14 @@ function renderScene() {
     "aria-label",
     scene.isFinal ? "Familia completa con cinco jugadores" : "Personajes y objetos de la partida"
   );
-  sceneVisual.replaceChildren(
-    ...sceneItems.map(createItemCard),
-    ...sceneCharacters.map(createAvatar)
-  );
+  if (scene.stageAction) {
+    sceneVisual.replaceChildren(createPlatformStage(scene, sceneCharacters, sceneItems));
+  } else {
+    sceneVisual.replaceChildren(
+      ...sceneItems.map(createItemCard),
+      ...sceneCharacters.map(createAvatar)
+    );
+  }
 
   if (scene.buttonDelay) {
     sceneTimers.push(window.setTimeout(() => {
