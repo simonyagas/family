@@ -1,4 +1,10 @@
 const assetPath = "assets/";
+const soundPath = "assets/";
+const soundFiles = {
+  advance: "click.wav",
+  unlock: "unlock.wav",
+  error: "error.wav",
+};
 
 // Character definitions are shared by every scene and support image fallbacks.
 const party = {
@@ -43,6 +49,7 @@ const scenes = [
     text: "A new adventure slot has appeared.",
     button: "CONTINUE",
     characters: ["simon", "agus", "alma", "baby1"],
+    tone: "unlock",
   },
   {
     status: "SYSTEM PAUSED",
@@ -70,6 +77,7 @@ const scenes = [
     text: "Double reward confirmed.",
     button: "CONTINUE",
     characters: ["simon", "agus", "alma", "baby1", "baby2"],
+    tone: "unlock",
   },
   {
     status: "EXPANSION READY",
@@ -83,6 +91,7 @@ const scenes = [
 
 let sceneIndex = 0;
 let audioContext;
+const audioCache = new Map();
 
 const sceneElement = document.querySelector("#scene");
 const sceneStatus = document.querySelector("#sceneStatus");
@@ -144,17 +153,37 @@ function renderScene() {
   }, 420);
 }
 
-function playTone(type = "advance") {
+function playSoundFile(type) {
+  const file = soundFiles[type] || soundFiles.advance;
+
+  if (!audioCache.has(file)) {
+    const audio = new Audio(`${soundPath}${file}`);
+    audio.preload = "auto";
+    audioCache.set(file, audio);
+  }
+
+  const audio = audioCache.get(file);
+  audio.currentTime = 0;
+  return audio.play();
+}
+
+function playGeneratedTone(type = "advance") {
   try {
     // Audio starts only after a user gesture, so browsers can allow it safely.
     audioContext ||= new AudioContext();
     const oscillator = audioContext.createOscillator();
     const gain = audioContext.createGain();
     const now = audioContext.currentTime;
+    const frequencies = {
+      advance: [520, 780],
+      unlock: [660, 990],
+      error: [110, 70],
+    };
+    const [startFrequency, endFrequency] = frequencies[type] || frequencies.advance;
 
     oscillator.type = type === "error" ? "sawtooth" : "square";
-    oscillator.frequency.setValueAtTime(type === "error" ? 110 : 520, now);
-    oscillator.frequency.exponentialRampToValueAtTime(type === "error" ? 70 : 780, now + 0.12);
+    oscillator.frequency.setValueAtTime(startFrequency, now);
+    oscillator.frequency.exponentialRampToValueAtTime(endFrequency, now + 0.12);
 
     gain.gain.setValueAtTime(0.0001, now);
     gain.gain.exponentialRampToValueAtTime(0.08, now + 0.01);
@@ -166,6 +195,16 @@ function playTone(type = "advance") {
     oscillator.stop(now + 0.18);
   } catch {
     // Audio is decorative; blocked or unsupported audio should not interrupt the reveal.
+  }
+}
+
+function playTone(type = "advance") {
+  try {
+    playSoundFile(type).catch(() => {
+      playGeneratedTone(type);
+    });
+  } catch {
+    playGeneratedTone(type);
   }
 }
 
