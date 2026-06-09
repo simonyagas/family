@@ -1,9 +1,10 @@
-const assetPath = "assets/";
-const soundPath = "assets/";
+const assetPath = "assets/img/";
+const soundPath = "assets/audio/";
 const soundFiles = {
-  advance: "click.wav",
-  unlock: "unlock.wav",
-  error: "error.wav",
+  start: "start.mp3",
+  advance: "select.mp3",
+  unlock: "level-up.mp3",
+  error: "glitch.mp3",
 };
 
 // Character definitions are shared by every scene and support image fallbacks.
@@ -236,10 +237,11 @@ function playTone(type = "advance") {
 }
 
 continueButton.addEventListener("click", () => {
+  const wasStartScreen = sceneIndex === 0;
   const isLastScene = sceneIndex === scenes.length - 1;
   sceneIndex = isLastScene ? 0 : sceneIndex + 1;
   renderScene();
-  playTone(scenes[sceneIndex].tone);
+  playTone(wasStartScreen ? "start" : scenes[sceneIndex].tone);
 });
 
 renderScene();
