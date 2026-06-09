@@ -12,7 +12,7 @@ const soundFiles = {
 
 const sharePayload = {
   title: "Familia Yagas - Partida 2026",
-  text: "Logro desbloqueado: familia de 5. Son mellizos.",
+  text: "Logro desbloqueado: familia de 5. Son mellizos. Nueva expansi\u00f3n en diciembre 2026.",
 };
 
 const party = {
@@ -123,7 +123,8 @@ const scenes = [
     status: "LOGRO DESBLOQUEADO",
     label: "FAMILIA YAGAS",
     title: "SON MELLIZOS",
-    text: "Familia de 5 confirmada\nJugador 4 y Jugador 5 se suman pronto",
+    text: "Familia de 5 confirmada",
+    release: "NUEVA EXPANSI\u00d3N: DICIEMBRE 2026",
     button: "JUGAR DE NUEVO",
     modifier: "is-achievement",
     characters: ["simon", "agus", "alma", "baby1", "baby2"],
@@ -144,6 +145,7 @@ const sceneVisual = document.querySelector("#sceneVisual");
 const sceneLabel = document.querySelector("#sceneLabel");
 const sceneTitle = document.querySelector("#sceneTitle");
 const sceneText = document.querySelector("#sceneText");
+const sceneRelease = document.querySelector("#sceneRelease");
 const continueButton = document.querySelector("#continueButton");
 const shareButton = document.querySelector("#shareButton");
 
@@ -257,6 +259,8 @@ function renderScene() {
   sceneLabel.textContent = scene.label;
   sceneTitle.textContent = scene.title;
   sceneText.textContent = scene.text;
+  sceneRelease.textContent = scene.release || "";
+  sceneRelease.hidden = !scene.release;
   continueButton.textContent = scene.button;
   continueButton.disabled = Boolean(scene.buttonDelay);
   continueButton.classList.toggle("is-hidden", Boolean(scene.buttonDelay));
@@ -286,6 +290,8 @@ function renderScene() {
         sceneLabel.textContent = update.label;
         sceneTitle.textContent = update.title;
         sceneText.textContent = update.text;
+        sceneRelease.textContent = "";
+        sceneRelease.hidden = true;
         playTone(update.tone || "error");
       }, update.delay));
     });
