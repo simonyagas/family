@@ -151,6 +151,9 @@ let replayClicks = 0;
 const audioCache = new Map();
 let backgroundMusic;
 let sceneTimers = [];
+let audioEnabled = true;
+let audioStarted = false;
+let audioPausedByVisibility = false;
 
 const sceneElement = document.querySelector("#scene");
 const sceneStatus = document.querySelector("#sceneStatus");
@@ -160,6 +163,7 @@ const sceneTitle = document.querySelector("#sceneTitle");
 const sceneText = document.querySelector("#sceneText");
 const sceneRelease = document.querySelector("#sceneRelease");
 const continueButton = document.querySelector("#continueButton");
+const soundButton = document.querySelector("#soundButton");
 const shareButton = document.querySelector("#shareButton");
 
 function clearSceneTimers() {
@@ -450,6 +454,15 @@ function renderScene() {
   }, 420);
 }
 
+function updateSoundButton() {
+  soundButton.setAttribute("aria-pressed", String(audioEnabled));
+  soundButton.setAttribute(
+    "aria-label",
+    audioEnabled ? "Desactivar sonido" : "Activar sonido"
+  );
+  soundButton.classList.toggle("is-muted", !audioEnabled);
+}
+
 function playSoundFile(type) {
   const file = soundFiles[type] || soundFiles.advance;
 
@@ -482,6 +495,57 @@ function playBackgroundMusic() {
     backgroundMusic.play().catch(() => {
       // Background music is optional; effects and reveal must keep working.
     });
+  }
+}
+
+function pauseAllAudioForVisibility() {
+  audioPausedByVisibility = true;
+
+  if (backgroundMusic) {
+    backgroundMusic.pause();
+  }
+
+  audioCache.forEach((audio) => {
+    audio.pause();
+    audio.currentTime = 0;
+  });
+
+  if (audioContext?.state === "running") {
+    audioContext.suspend().catch(() => {
+      // Pausing generated tones is best-effort and should not affect the reveal.
+    });
+  }
+}
+
+function resumeAudioAfterUserGesture() {
+  if (!audioEnabled || !audioStarted || !audioPausedByVisibility) {
+    return;
+  }
+
+  audioPausedByVisibility = false;
+
+  if (audioContext?.state === "suspended") {
+    audioContext.resume().catch(() => {
+      // Decorative audio must never block the interaction.
+    });
+  }
+
+  playBackgroundMusic();
+}
+
+function setAudioEnabled(enabled) {
+  audioEnabled = enabled;
+  audioPausedByVisibility = false;
+  updateSoundButton();
+
+  if (!audioEnabled) {
+    pauseAllAudioForVisibility();
+    audioPausedByVisibility = false;
+    return;
+  }
+
+  if (audioStarted) {
+    playBackgroundMusic();
   }
 }
 
@@ -518,6 +582,20 @@ function playGeneratedTone(type = "advance") {
 }
 
 function playTone(type = "advance") {
+  if (!audioEnabled) {
+    return;
+  }
+
+  if (document.hidden) {
+    if (audioStarted) {
+      audioPausedByVisibility = true;
+    }
+
+    return;
+  }
+
+  audioStarted = true;
+  audioPausedByVisibility = false;
   playBackgroundMusic();
 
   try {
@@ -557,6 +635,8 @@ async function shareReveal() {
 }
 
 continueButton.addEventListener("click", () => {
+  resumeAudioAfterUserGesture();
+
   const wasStartScreen = sceneIndex === 0;
   const isLastScene = sceneIndex === scenes.length - 1;
 
@@ -572,6 +652,39 @@ continueButton.addEventListener("click", () => {
   playTone(scenes[sceneIndex].isFinal ? "win" : wasStartScreen ? "start" : scenes[sceneIndex].tone);
 });
 
+soundButton.addEventListener("click", () => {
+  if (!audioEnabled) {
+    resumeAudioAfterUserGesture();
+  }
+
+  setAudioEnabled(!audioEnabled);
+});
+
 shareButton.addEventListener("click", shareReveal);
 
+document.addEventListener("visibilitychange", () => {
+  if (document.hidden && audioEnabled && audioStarted) {
+    pauseAllAudioForVisibility();
+  }
+});
+
+window.addEventListener("pagehide", () => {
+  if (audioEnabled && audioStarted) {
+    pauseAllAudioForVisibility();
+  }
+});
+
+window.addEventListener("blur", () => {
+  if (audioEnabled && audioStarted) {
+    pauseAllAudioForVisibility();
+  }
+});
+
+window.addEventListener("focus", () => {
+  if (audioEnabled && audioStarted && audioPausedByVisibility) {
+    updateSoundButton();
+  }
+});
+
+updateSoundButton();
 renderScene();
