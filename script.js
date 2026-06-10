@@ -15,7 +15,7 @@ const soundFiles = {
 
 const sharePayload = {
   title: "Nueva partida familiar",
-  text: "Tenemos una noticia enorme: la familia crece. Son mellizos y llegan en diciembre de 2026.",
+  text: "Una nueva partida familiar para descubrir. Presioná start y mirá la sorpresa.",
 };
 
 const party = {
