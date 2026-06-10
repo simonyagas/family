@@ -1,4 +1,4 @@
-# Familia Yagas - Partida 2026
+# Nueva partida familiar
 
 Web estática interactiva estilo videojuego retro para anunciar una expansión familiar con mellizos.
 
