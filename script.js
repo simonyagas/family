@@ -14,8 +14,8 @@ const soundFiles = {
 };
 
 const sharePayload = {
-  title: "Familia Yagas - Partida 2026",
-  text: "Logro desbloqueado: familia de 5. Son mellizos. Nueva expansi\u00f3n en diciembre 2026.",
+  title: "Familia Yagas - Nueva partida",
+  text: "Hay una sorpresa esperando. Presiona start para descubrirla.",
 };
 
 const party = {
